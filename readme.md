@@ -1,19 +1,2 @@
-## Develop Azure compute solutions (25-30%)
-* Implement IaaS solutions
-    * Provision virtual machines (VMs)
-    * Configure, validate, and deploy ARM templates
-    * Configure container images for solutions
-    * Publish an image to Azure Container Registry
-    * Run containers by using Azure Container Instance
-* Create Azure App Service Web Apps
-    * Create an Azure App Service Web App
-    * Enable diagnostics logging
-    * Deploy code to a web app
-    * Configure web app settings including SSL, API settings, and connection strings
-    * Implement autoscaling rules including scheduled autoscaling and autoscaling by operational or
-system metrics
-* Implement Azure Functions
-    * Create and deploy Azure Functions apps
-    * Implement input and output bindings for a function
-    * Implement function triggers by using data operations, timers, and webhooks
-    * Implement Azure Durable Functions 
+## AZ-204 Preparation
+* The purpose of this repository is to consolidate various sources to make it a one stop shop to aid preparing for the AZ-204. Microsoft github has some use-cases listed to cover various areas of the exam. Most of the solutions presented are in C#. For people who are good in Java, this repository attempts to present the same solutions in Spring-boot.
