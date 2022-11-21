@@ -16,11 +16,11 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
-		<subscriptionId>${subscriptionId}</subscriptionId>
-		<resourceGroup>${resourceGroup}</resourceGroup>
-		<appName>${appName}</appName>
-		<pricingTier>${pricingTier}</pricingTier>
-		<region>${region}</region>
+		<subscriptionId>0f39574d-d756-48cf-b622-0e27a6943bd2</subscriptionId>
+		<resourceGroup>1-ac80c192-playground-sandbox</resourceGroup>
+		<appName>imagestor-webapp-1668993836684</appName>
+		<pricingTier>S1</pricingTier>
+		<region>centralus</region>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -32,6 +32,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 	</dependencies>
 
