@@ -18,6 +18,9 @@
 * The webapp will call the API and send the bytes to it via MultiPartFile. 
 * That will be stored in the temp folder of the API. 
 
-![deployment_summary](../media/homepage.PNG)
+##Run screen shots
+![deployment_summary](../media/storage_account_files.PNG)
 
-![deployment_summary](../media/listfiles.PNG)
+![homepage](../media/homepage.PNG)
+
+![list_files](../media/listfiles.PNG)
