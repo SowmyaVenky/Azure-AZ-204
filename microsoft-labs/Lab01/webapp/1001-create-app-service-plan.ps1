@@ -13,4 +13,4 @@ $location = az group list --output tsv --query [*].location --subscription $SUBS
 echo $location 
 
 echo "Creating an appservice to push our apps"
-az appservice plan create -g $rg -n venkyappsvc1001 --is-linux --number-of-workers 4 --sku S1
+az appservice plan create -g $rg -n venkyappsvc1001 --is-linux --sku B3
