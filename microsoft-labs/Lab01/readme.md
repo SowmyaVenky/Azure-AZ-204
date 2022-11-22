@@ -6,3 +6,6 @@
 * Explore CLIs needed to push code to the app.
 * Explore how to externalize configuration items for the webapp using Azure App Configuration.
 * Investigate how to incorporate feature flags to enable/hide specific functions in the app.
+
+## Interesting links
+* https://github.com/bervProject/az204-azure-cli-glossary/tree/main/docs
