@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class UploadController {
 	//API to push file to storage
-	private static String FILE_UPLOAD_API_ENDPOINT = "https://imagestor-api-1668993836684.azurewebsites.net/uploadFile/";
+	//private static String FILE_UPLOAD_API_ENDPOINT = "https://imagestor-api-1668993836684.azurewebsites.net/uploadFile/";
+	//private static String FILE_UPLOAD_API_ENDPOINT = "http://localhost:9090/uploadFile/";
+	
+	@Value("${FILE_UPLOAD_API_ENDPOINT}")
+	private String FILE_UPLOAD_API_ENDPOINT;
+	
 	@GetMapping("/uploadimage")
 	public String displayUploadForm() {
 		return "imageupload/index";
@@ -31,6 +37,7 @@ public class UploadController {
 
 	@PostMapping("/upload")
 	public String uploadImage(Model model, @RequestParam("image") MultipartFile file) throws IOException {
+		System.out.println("File Upload URL is: " + FILE_UPLOAD_API_ENDPOINT);
 		StringBuilder fileNames = new StringBuilder();
 		fileNames.append(file.getOriginalFilename());
 		System.out.println("Image uploaded is: " + file.getOriginalFilename() + " is of size: " + file.getBytes().length);
@@ -39,7 +46,7 @@ public class UploadController {
 		return "imageupload/index";
 	}
 
-	private static void uploadSingleFile(MultipartFile file) throws IOException {
+	private void uploadSingleFile(MultipartFile file) throws IOException {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 

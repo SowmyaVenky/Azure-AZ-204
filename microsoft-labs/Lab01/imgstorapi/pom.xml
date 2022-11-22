@@ -40,6 +40,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.azure.spring/spring-cloud-azure-starter-storage-blob -->
+		<dependency>
+			<groupId>com.azure.spring</groupId>
+			<artifactId>spring-cloud-azure-starter-storage-blob</artifactId>
+			<version>4.4.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

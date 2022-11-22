@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.gssystems.web.response.UploadFileResponse;
+import com.gssystems.web.service.BlobStorageService;
 import com.gssystems.web.service.FileStorageService;
 
 @RestController
@@ -33,9 +34,15 @@ public class UploadController {
 	@Autowired
 	private FileStorageService fileStorageService;
 
+	@Autowired
+	private BlobStorageService blobStorageService;
+	
 	@PostMapping("/uploadFile")
 	public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
 		String fileName = fileStorageService.storeFile(file);
+		
+		//Now we persist into the blob container too.
+		fileName = blobStorageService.storeFile(file);
 
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
 				.path(fileName).toUriString();
