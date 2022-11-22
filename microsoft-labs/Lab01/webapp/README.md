@@ -11,3 +11,13 @@
     * change directory to imgstorapi and run the deploy_app.ps1 to push the API also to the same app service plan. 
 
 ![deployment_summary](../media/Deployment_Summary.PNG)
+
+## Testing
+* Go to the URL https://imagestor-webapp-1668993836684.azurewebsites.net/uploadimage
+* Use the file picker to take the image and push the upload. 
+* The webapp will call the API and send the bytes to it via MultiPartFile. 
+* That will be stored in the temp folder of the API. 
+
+![deployment_summary](../media/homepage.PNG)
+
+![deployment_summary](../media/listfiles.PNG)

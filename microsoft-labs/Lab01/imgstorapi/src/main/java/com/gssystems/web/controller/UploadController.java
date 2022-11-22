@@ -1,7 +1,9 @@
 package com.gssystems.web.controller;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,4 +65,18 @@ public class UploadController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
+
+	@GetMapping("/listfiles")
+	public ResponseEntity<Set<String>> listFiles() {
+		Set<String> retVal = new TreeSet<String>();
+		File f = new File("/temp");
+		String[] fileList = f.list();
+
+		for (String a : fileList) {
+			retVal.add(a);
+		}
+
+		return new ResponseEntity<Set<String>>(retVal, HttpStatus.OK);
+	}
+
 }
