@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class UploadController {
 	//API to push file to storage
-	private static String FILE_UPLOAD_API_ENDPOINT = "http://localhost:9090/uploadFile/";
+	private static String FILE_UPLOAD_API_ENDPOINT = "https://imagestor-api-1668993836684.azurewebsites.net/uploadFile/";
 	@GetMapping("/uploadimage")
 	public String displayUploadForm() {
 		return "imageupload/index";
