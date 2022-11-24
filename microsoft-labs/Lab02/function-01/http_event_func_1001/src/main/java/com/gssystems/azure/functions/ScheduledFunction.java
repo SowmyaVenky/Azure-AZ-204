@@ -12,8 +12,9 @@ public class ScheduledFunction {
      */
 
     @FunctionName("repeatOnSchedule")
+    //This cron expression will make it run every minute.
     public void repeatOnSchedule(
-            @TimerTrigger(name="repeatTrigger", schedule = "0 * */30 * * *") String timerInfo,
+            @TimerTrigger(name="repeatTrigger", schedule = "0 * * * * *") String timerInfo,
             ExecutionContext context
     ) {
         context.getLogger().info("The function has triggered at : " + LocalDateTime.now());
