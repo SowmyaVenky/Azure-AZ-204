@@ -25,3 +25,5 @@ mvn azure-functions:run
 
 # Pass proper parameters to the maven build to make sure we can build as required.
 1002-deploy_app.ps1 (internally calls run_maven.bat passing the right parameters needed.)
+
+# Azurite is needed for running functions that depend on storage (even schedule triggered ones)
