@@ -4,9 +4,13 @@ import java.util.Arrays;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 
+import com.gssystems.web.controller.MessageProperties;
+
 @SpringBootApplication
+@EnableConfigurationProperties(MessageProperties.class)
 public class Application {
 
 	public static void main(String[] args) {
@@ -17,8 +21,8 @@ public class Application {
 		String[] beanNames = ctx.getBeanDefinitionNames();
 		Arrays.sort(beanNames);
 		for (String beanName : beanNames) {
-			//System.out.println(beanName);
+			// System.out.println(beanName);
 		}
 	}
-	
+
 }

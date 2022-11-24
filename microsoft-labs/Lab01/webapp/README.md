@@ -18,9 +18,20 @@
 * The webapp will call the API and send the bytes to it via MultiPartFile. 
 * That will be stored in the temp folder of the API. 
 
-##Run screen shots
+## Run screen shots
 ![deployment_summary](../media/storage_account_files.PNG)
 
 ![homepage](../media/homepage.PNG)
 
 ![list_files](../media/listfiles.PNG)
+
+## App config setup.
+![list_files](../media/assets_with_app_config.PNG)
+
+* The app configuration has 2 keys and associated values. We have setup the configuration to auto refresh the keys every 30 sec if there is a change detected to the sentinel key. This allows apps to get changes to the app configs dynamically. 
+![list_files](../media/app_config_keys.PNG)
+
+## Feature Flags
+![list_files](../media/feature_flags.PNG)
+
+
