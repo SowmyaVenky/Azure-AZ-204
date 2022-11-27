@@ -1,0 +1,8 @@
+SET JAVA_HOME=C:\Venky\jdk-11.0.15.10-hotspot
+set PATH=%PATH%;c:\Venky\jdk-11.0.15.10-hotspot\bin
+set PATH=%PATH%;c:\Venky\apache-maven-3.8.6\bin
+mvn clean package
+
+## Add users using postman
+{"email":"john.doe@foobar.com","firstName":"John","lastName":"Doe","city":"NYC"}
+{"email":"mr.jim@foobar.com", "firstName": "mr", "lastName": "jim", "city": "Seattle"}
