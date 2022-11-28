@@ -8,5 +8,10 @@ This lab demonstrates how to we can combine the services of blob storage and cos
 * Upload the JSON data to the cosmos database using the API
 * Develop the web front end to allow us to see images and cosmos data based on user criteria. 
 
+## Cosmos DB Emulator showing data.
+![Azure Blob Storage client.](./media/cosmosdb-emulator-items.png)
+
+![Azure Blob Storage client.](./media/cosmosdb-emulator-count.png)
+
 ## Interesting links
 * https://github.com/bervProject/az204-azure-cli-glossary/tree/main/docs/cosmos  
