@@ -1,6 +1,8 @@
 package com.gssytems.polyglot.model;
 
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import org.springframework.data.annotation.Id;
 
 import java.util.UUID;
@@ -9,13 +11,29 @@ public class Product {
     @Id
     @PartitionKey
     public UUID id;
+
+    @SerializedName("Name")
     public String name;
+
+    @SerializedName("Number")
     public String number;
+
+    @SerializedName("Category")
     public String category;
+
+    @SerializedName("Color")
     public String color;
+
+    @SerializedName("Size")
     public String size;
+
+    @SerializedName("Weight")
     public double weight;
+
+    @SerializedName("ListPrice")
     public double listPrice;
+
+    @SerializedName("Photo")
     public String photo;
 
     public UUID getId() {
@@ -88,5 +106,10 @@ public class Product {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String toString() {
+        Gson gs = new Gson();
+        return gs.toJson(this);
     }
 }

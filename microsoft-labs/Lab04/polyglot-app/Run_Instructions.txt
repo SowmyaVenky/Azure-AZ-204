@@ -6,3 +6,15 @@ mvn clean package
 ## Add users using postman
 {"email":"john.doe@foobar.com","firstName":"John","lastName":"Doe","city":"NYC"}
 {"email":"mr.jim@foobar.com", "firstName": "mr", "lastName": "jim", "city": "Seattle"}
+
+## cosmos db emulator
+Install the emulator for windows by downloading it from microsoft.
+Start the emulator and get the values for the url, key etc. from the windows that shows.
+
+## Run the ModelsDataLoader program to load all the documents from the models.json file to cosmos.
+The issues these queries to check
+
+SELECT * FROM Model
+SELECT VALUE COUNT(1) FROM Model
+
+
