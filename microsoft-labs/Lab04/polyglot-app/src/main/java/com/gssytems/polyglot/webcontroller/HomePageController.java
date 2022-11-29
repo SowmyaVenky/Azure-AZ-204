@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,7 +20,18 @@ public class HomePageController {
     @Autowired
     private ModelRepository models;
 
-    @GetMapping("/home")
+    @GetMapping("/")
+    public String home(Model model) {
+        Iterable<com.gssytems.polyglot.model.Model> ms = models.findAll();
+        List<com.gssytems.polyglot.model.Model> allm = new ArrayList<>();
+
+        for(com.gssytems.polyglot.model.Model a: ms) {
+            allm.add(a);
+        }
+        model.addAttribute("models", allm);
+        return "home";
+    }
+    @GetMapping("/model")
     public String mainWithParam(
             @RequestParam(name = "id", required = true, defaultValue = "")
                     String id, Model model) {

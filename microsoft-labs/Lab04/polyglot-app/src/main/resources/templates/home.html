@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+<div>
+    <h2>
+        <span>Here are the models present.</span>
+    </h2>
+
+    <table border="1" width="100%">
+        <thead>
+            <tr>
+                <td>Id</td>
+                <td>Name</td>
+            </tr>
+        </thead>
+        <tr  th:each="modeldata : ${models}">
+            <td><a th:href="@{/model?(id=${modeldata.id})}">[[${modeldata.id}]]</a></td>
+            <td th:text="${modeldata.name} ?: 'UNKNOWN'"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
