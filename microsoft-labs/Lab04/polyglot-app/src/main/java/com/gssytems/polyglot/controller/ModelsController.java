@@ -1,22 +1,18 @@
 package com.gssytems.polyglot.controller;
 
+import com.azure.cosmos.models.PartitionKey;
 import com.gssytems.polyglot.model.Model;
 import com.gssytems.polyglot.repo.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.azure.cosmos.models.PartitionKey;
-
-@Controller
+@RestController
 @RequestMapping(path = "/models")
 public class ModelsController {
 

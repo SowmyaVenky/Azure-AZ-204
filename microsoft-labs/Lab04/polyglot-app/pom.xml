@@ -30,6 +30,10 @@
       		<groupId>com.azure.spring</groupId>
       		<artifactId>spring-cloud-azure-starter-data-cosmos</artifactId>
     	</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

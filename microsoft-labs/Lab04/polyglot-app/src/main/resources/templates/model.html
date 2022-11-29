@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+
+<body>
+    <div>
+        <h2>
+            <span th:text="'Here the model with the id: ' + ${id}"></span>
+        </h2>
+
+        <table border="1" width="100%">
+            <tr>
+                <td>Model Id</td>
+                <td th:text="${modeldata.id} ?: 'UNKNOWN'"></td>
+            </tr>
+            <tr>
+                <td>Model Name</td>
+                <td th:text="${modeldata.name} ?: 'UNKNOWN'"></td>
+            </tr>
+            <tr>
+                <td>Model Category</td>
+                <td th:text="${modeldata.category} ?: 'UNKNOWN'"></td>
+            </tr>
+            <tr>
+                <td>Model Description</td>
+                <td th:text="${modeldata.description} ?: 'UNKNOWN'"></td>
+            </tr>
+            <tr>
+                <td>Model Photo</td>
+                <td th:text="${modeldata.photo} ?: 'UNKNOWN'"></td>
+            </tr>
+        </table>
+
+        <h2>Model Products</h2>
+
+        <table th:each="product : ${modeldata.products}" border="1" width="100%">
+            <tr>
+                <td>Product Id</td>
+                <td th:text="${product.id}"></td>
+            </tr>
+            <tr>
+                <td>Product Name</td>
+                <td th:text="${product.name}"></td>
+            </tr>
+            <tr>
+                <td>Product Number</td>
+                <td th:text="${product.number}"></td>
+            </tr>
+            <tr>
+                <td>Product Category</td>
+                <td th:text="${product.category}"></td>
+            </tr>
+            <tr>
+                <td>Product Color</td>
+                <td th:text="${product.color}"></td>
+            </tr>
+            <tr>
+                <td>Product Size</td>
+                <td th:text="${product.size}"></td>
+            </tr>
+            <tr>
+                <td>Product Weight</td>
+                <td th:text="${product.weight}"></td>
+            </tr>
+            <tr>
+                <td>Product ListPrice</td>
+                <td th:text="${product.listPrice}"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
