@@ -34,4 +34,5 @@
 ## Feature Flags
 ![list_files](../media/feature_flags.PNG)
 
-
+Note that the config key needs to be /application/config.message.
+When creating the feature flag, make sure the Label field is left blank.
