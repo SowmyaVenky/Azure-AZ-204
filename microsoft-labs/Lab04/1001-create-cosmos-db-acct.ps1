@@ -15,3 +15,6 @@ echo $location
 echo "Creating a cosmos db account for the app and an app service plan to host webapp."
 az appservice plan create -g $rg -n venkyappsvc1001 --is-linux --sku B3
 az cosmosdb create --name venkycosmosdb1001 --resource-group $rg
+
+echo "Getting the cosmos db read key"
+az cosmosdb keys list --name venkycosmosdb1001 --resource-group $rg --subscription $SUBSCRIPTION_ID --type keys

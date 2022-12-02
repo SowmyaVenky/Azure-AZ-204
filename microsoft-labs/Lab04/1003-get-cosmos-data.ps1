@@ -12,8 +12,8 @@ echo "Getting the location of the resource group to create resources"
 $location = az group list --output tsv --query [*].location --subscription $SUBSCRIPTION_ID
 echo $location 
 
-echo "Creating a storage account"
-az storage account create --name venkystorage1001 --resource-group $rg --location $location --sku Standard_LRS --kind StorageV2
+echo "Getting the cosmos db read key -- PLEASE CHANGE THIS KEY IN THE application.properties file!!!"
+az cosmosdb keys list --name venkycosmosdb1001 --resource-group $rg --subscription $SUBSCRIPTION_ID --type keys --query primaryMasterKey --output tsv
 
-echo "Creating container for storing images"
-az storage container create --name imagescontainer --account-name venkystorage1001 --auth-mode login --public-access on
+echo "Getting the cosmos db connection string"
+az cosmosdb keys list --name venkycosmosdb1001 --resource-group $rg --subscription $SUBSCRIPTION_ID --type connection-strings 

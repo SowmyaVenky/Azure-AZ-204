@@ -1,0 +1,6 @@
+# Set path to maven
+#Show current path in powershell
+$Env:PATH
+
+#Add maven to the path.
+$Env:PATH += ";c:\Venky\apache-maven-3.8.4\bin"
