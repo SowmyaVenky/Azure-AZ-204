@@ -1,17 +1,23 @@
 package com.gssytems.polyglot;
 
-import com.google.gson.Gson;
-import com.gssytems.polyglot.model.Model;
+import java.io.FileReader;
+import java.util.List;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.FileReader;
-import java.util.List;
+import com.google.gson.Gson;
+import com.gssytems.polyglot.model.Model;
 
+/** 
+ * This class will load the data in the models file over to cosmos using the REST API we have written.
+ * @author VenkyJagannath
+ *
+ */
 public class ModelsDataLoader {
-    private static final String MODELS_FILE_NAME = "C:\\Venky\\DP-203\\Azure-AZ-204\\microsoft-labs\\Lab04\\models.json";
+	private static final String MODELS_FILE_NAME = "C:\\Venky\\DP-203\\Azure-AZ-204\\microsoft-labs\\Lab04\\models.json";
     public static void main(String[] args) throws Exception {
         System.setProperty("javax.net.ssl.trustStore", "NUL");
         System.setProperty("javax.net.ssl.trustStoreType", "Windows-ROOT");

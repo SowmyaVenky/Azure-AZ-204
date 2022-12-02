@@ -16,4 +16,7 @@ echo "Creating a storage account"
 az storage account create --name venkystorage1001 --resource-group $rg --location $location --sku Standard_LRS --kind StorageV2
 
 echo "Creating container for storing images"
-az storage container create --name imagescontainer --account-name venkystorage1001 --auth-mode login --public-access on
+az storage container create --name imagescontainer --account-name venkystorage1001 --auth-mode login --public-access container
+
+echo "Uploading the images to blob storage to show on the website. "
+az storage blob directory upload -c imagescontainer --account-name venkystorage1001 -s "C:\Venky\DP-203\Azure-AZ-204\microsoft-labs\Lab04\productimages\" -d productimages --recursive
