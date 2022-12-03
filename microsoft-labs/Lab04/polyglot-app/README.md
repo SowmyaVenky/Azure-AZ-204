@@ -32,3 +32,15 @@ az login
 * Start the spring boot program with the profile local - This will make sure that the application-local.properties is used and it connects to both local cosmos and Azurite. 
 
 mvn spring-boot:run -Dspring-boot.run.profiles=local
+
+* All the commands used to run this project locally are documented in Run_Instructions.txt
+
+![Azure Blob Storage client.](../media/cosmosdb-emulator-items.png)
+
+![Azure Blob Storage client.](../media/cosmosdb-emulator-count.png)
+
+![Azure Blob Storage client.](../media/images_loaded_into_azurite.png)
+
+![Azure Blob Storage client.](../media/home-page-list-from-cosmos.png)
+
+![Azure Blob Storage client.](../media/detail-page-from-cosmos-and-blob.png)
