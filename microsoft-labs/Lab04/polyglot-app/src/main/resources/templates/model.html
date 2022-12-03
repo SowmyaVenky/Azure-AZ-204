@@ -34,6 +34,12 @@
 				<td><img
 					th:src="'https://venkystorage1001.blob.core.windows.net/imagescontainer/productimages/productimages/' + ${modeldata.photo} ?: 'UNKNOWN'"></td>
 			</tr>
+						<tr>
+				<td>Model Photo (from Azurite if local testing)</td>
+				<td><img
+					th:src="'http://localhost:10000/devstoreaccount1/imagescontainer/' + ${modeldata.photo} ?: 'UNKNOWN'"></td>
+			</tr>
+			
 		</table>
 
 		<h2>Model Products</h2>

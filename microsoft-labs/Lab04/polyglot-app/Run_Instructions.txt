@@ -1,6 +1,7 @@
 SET JAVA_HOME=C:\Venky\jdk-11.0.15.10-hotspot
 set PATH=%PATH%;c:\Venky\jdk-11.0.15.10-hotspot\bin
 set PATH=%PATH%;c:\Venky\apache-maven-3.8.6\bin
+
 mvn clean package
 
 ## Add users using postman
@@ -12,9 +13,21 @@ Install the emulator for windows by downloading it from microsoft.
 Start the emulator and get the values for the url, key etc. from the windows that shows.
 
 ## Run the ModelsDataLoader program to load all the documents from the models.json file to cosmos.
-The issues these queries to check
+mvn exec:java -Dexec.mainClass="com.gssytems.polyglot.ModelsDataLoader" -Dexec.args="C:\\Venky\\DP-203\\Azure-AZ-204\\microsoft-labs\\Lab04\\productimages\\"
+
+## The issues these queries to check
 
 SELECT * FROM Model
 SELECT VALUE COUNT(1) FROM Model
+
+## Azurite URL for image 
+## http://localhost:10000/devstoreaccount1/imagescontainer/wheel.jpg
+
+## Local run profile
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+
+
+## This loads the images to the Azurite storage account. 
+mvn exec:java -Dexec.mainClass="com.gssytems.polyglot.AzuriteDataLoader" -Dexec.args="C:\\Venky\\DP-203\\Azure-AZ-204\\microsoft-labs\\Lab04\\productimages\\"
 
 
