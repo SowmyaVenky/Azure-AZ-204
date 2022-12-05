@@ -25,9 +25,5 @@ $acrName=$(az acr list --query "max_by([], &creationDate).name" --output tsv)
 echo $acrName
 
 $TOKEN=$(az acr login --name venkyacr1001 --expose-token --output tsv --query accessToken)
+echo "Here is the token that we need to use on the vm to push the custom images we have built to the ACR"
 echo $TOKEN
-
-#### Get the token value from here, and then use that to login to the registry from the virtual machine.
-docker login venkyacr1001.azurecr.io -u 00000000-0000-0000-0000-000000000000 -p <<ENTER_TOKEN_FROM_ECHO>>
-sudo docker tag sowmyavenky/spring-mysql-jpa:latest venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa:latest
-sudo docker push venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa:latest

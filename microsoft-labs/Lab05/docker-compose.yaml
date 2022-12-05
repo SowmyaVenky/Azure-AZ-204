@@ -1,0 +1,33 @@
+version: "3"
+services:
+  venkymysql:
+    image: venkyacr1001.azurecr.io/sowmyavenky/mysql-custom:latest
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=Ganesh20022002 --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 20s
+      retries: 10
+    networks:
+      - venky-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=Ganesh20022002
+
+  server:
+    image: venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.datasource.url=jdbc:mysql://venkymysql:3306/testdb
+      - spring.datasource.username=venkyuser
+      - spring.datasource.password=Ganesh20022002
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+      - spring.jpa.hibernate.ddl-auto=update
+    networks:
+      - venky-network
+    depends_on:
+      - venkymysql
+
+networks:
+  venky-network:

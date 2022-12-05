@@ -1,0 +1,38 @@
+apiVersion: 2019-12-01
+location: westus
+name: venkycg1001
+properties:
+  imageRegistryCredentials:
+  - server: venkyacr1001.azurecr.io
+    username: venkyacr1001
+    password: svOj9X74s7AFXBpbsIt2i7LET3I99TVZl3M3EZfH0k+ACRC/m9kF
+  containers:
+  - name: custom-mysql
+    properties:
+      image: venkyacr1001.azurecr.io/sowmyavenky/mysql-custom:latest
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 3306          
+  - name: venkyfe1001
+    properties:
+      image: venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa:latest
+      resources:
+        requests:
+          cpu: 1
+          memoryInGb: 1.5
+      ports:
+      - port: 80
+      - port: 8080
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: 80
+    - protocol: tcp
+      port: 8080
+tags: {app: custom-aci-jpa-example}
+type: Microsoft.ContainerInstance/containerGroups
