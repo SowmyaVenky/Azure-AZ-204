@@ -17,6 +17,142 @@ sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 
+## MySQL is not working for some reason inside ACI. I am trying with postgres instead since that seems to work fine. 
+mkdir postgres-custom
+cd postgres-custom
+## Copy the postgres-docker-compose.yaml and rename it to docker-compose.yaml
+## Skip the mysql section if we want to pursue mysql - but it is not working in ACI and move over to the app area.
+## Start the postgres as a docker container to test app locally first.
+sudo docker run -d --name venkypostgres -e POSTGRES_USER=venkyuser -e POSTGRES_DB=testdb -e POSTGRES_PASSWORD=Ganesh20022002 -p 5432:5432 postgres
+
+##Check the container running 
+venky@quickvm:~/postgres-custom/spring-mysql-jpa$ sudo docker ps
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+fd0e13f94e40   postgres   "docker-entrypoint.s…"   13 seconds ago   Up 10 seconds   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   venkypostgres
+
+sudo docker logs venkypostgres 
+# Check logs to make sure postgres is good
+
+## Sample springboot app with mysql 
+sudo apt install -y wget unzip
+wget https://github.com/SowmyaVenky/Azure-AZ-204/raw/main/microsoft-labs/Lab05/spring-mysql-jpa.zip
+unzip spring-mysql-jpa.zip
+rm spring-mysql-jpa.zip
+cd spring-mysql-jpa
+
+sudo apt install -y default-jdk maven
+mvn clean package
+mvn spring-boot:run
+
+## This is how we insert and get data
+
+curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":1,"title":"Spring boot tutorial #1", "description":"This is the 1st in the series", "published": false}'
+curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":2,"title":"Spring boot tutorial #2", "description":"This is the 2nd in the series", "published": false}'
+curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":3,"title":"Spring boot tutorial #3", "description":"This is the 3rd in the series", "published": false}'
+curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":4,"title":"Spring boot tutorial #4", "description":"This is the 4th in the series", "published": false}'
+curl -X GET http://localhost:8080/api/tutorials
+curl -X GET http://localhost:8080/api/tutorials/1
+curl -X GET http://localhost:8080/api/tutorials/2
+curl -X GET http://localhost:8080/api/tutorials/3
+curl -X GET http://localhost:8080/api/tutorials/4
+
+## Next build docker image for the app layer,
+sudo mvn spring-boot:build-image _DskipTests=true -Dspring-boot.build-image.imageName=sowmyavenky/spring-jpa:latest
+
+## Make sure that both the custom images are there
+venky@quickvm:~/postgres-custom/spring-mysql-jpa$ sudo docker images
+REPOSITORY                 TAG        IMAGE ID       CREATED        SIZE
+paketobuildpacks/run       base-cnb   aaa2f1dd3ebf   5 hours ago    88.8MB
+postgres                   latest     68f5d950dcd3   2 weeks ago    379MB
+sowmyavenky/spring-jpa     latest     19ad5a91b10c   42 years ago   250MB <-- check this one. 
+paketobuildpacks/builder   base       e7466b79959b   42 years ago   1.32GB
+
+## Next we can test both postgres and spring jpa in one docker compose. 
+## Stop postgres image first 
+sudo apt install -y docker-compose
+sudo docker-compose up 
+
+venky@quickvm:~$ sudo docker ps
+CONTAINER ID   IMAGE                           COMMAND                  CREATED         STATUS                   PORTS                                       NAMES
+28ddd95c7d48   sowmyavenky/spring-jpa:latest   "/cnb/process/web"       4 minutes ago   Up 4 minutes             0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   postgres-custom_frontend_1
+a244494b8dad   postgres:latest                 "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes (healthy)   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   postgres-custom_venkypostgres_1
+
+## As we can see the 2 containers are running fine. We can execute the curl commands above to validate and make sure the apps work.
+
+## Next create the ACR 
+.\1002-create-acr.ps1
+
+##Sometimes we get error `Cannot autolaunch D-Bus without X11 $DISPLAY`
+## to get rid of this use 
+sudo apt-get install pass gnupg2
+
+#### Get the token value from the powershell and set it as env var on vm, and then use that to login to the registry from the virtual machine.
+export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFXRkc6TTIzNzpLMkhBOjMzREs6NVBHVDpDQTNNOkRCTjM6WE9RQjpBNVFCOkk2M1E6QVQzUTpOUUFLIn0.eyJqdGkiOiJmYjg3NmMyYS1mMmVmLTRjNDgtOGY1Zi02MjlkN2QxNjU5ZjkiLCJzdWIiOiJjbG91ZF91c2VyX3BfNWVkNmExN2FAYXp1cmVsYWJzLmxpbnV4YWNhZGVteS5jb20iLCJuYmYiOjE2NzAyOTE5NTMsImV4cCI6MTY3MDMwMzY1MywiaWF0IjoxNjcwMjkxOTUzLCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJ2ZW5reWFjcjEwMDEuYXp1cmVjci5pbyIsInZlcnNpb24iOiIxLjAiLCJyaWQiOiIxMjc2NjFlNmIxN2U0ZTY3OGYwYzY0NzkxNDU2MzE4YyIsImdyYW50X3R5cGUiOiJyZWZyZXNoX3Rva2VuIiwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJ0ZW5hbnQiOiIzNjE3ZWY5Yi05OGI0LTQwZDktYmE0My1lMWVkNjcwOWNmMGQiLCJwZXJtaXNzaW9ucyI6eyJBY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSIsImRlbGV0ZWQvcmVhZCIsImRlbGV0ZWQvcmVzdG9yZS9hY3Rpb24iXSwiTm90QWN0aW9ucyI6bnVsbH0sInJvbGVzIjpbXX0.M7T6gi5EYiO3OoFgnB-68Dc9Nnuw3kPfJToeAee_Qk5gso5o3GtS4_P3_6uJJE5twOftrkwoiG4gbYQq7s4z8CYP180XV3dV-i0cjVXXNgJLHaWU3RIvyJyPvNEuluwlf-vlxZMVEOzfPvMA1eOVFSH6n-ooQffXGxH3TZRFyqt23UWH81wkuDwezPpOGpphL8x2NU7cMvQHDJjQD0-nM3MQzTpZytZMV734-smyJ8YTvB8NYODB12zOrtQsMIIPVj-h238Go8XsAD0dFBSQyshPKbiXUNIQGfdJFXnFRtqNlSdIbvZU_nZjGnwPMpWb125yTiWyPmqXCpgVq8Cqaw
+sudo docker login venkyacr1001.azurecr.io -u 00000000-0000-0000-0000-000000000000 -p $TOKEN
+
+#Push mysql custom image. 
+sudo docker tag postgres:latest venkyacr1001.azurecr.io/sowmyavenky/postgres:latest
+sudo docker push venkyacr1001.azurecr.io/sowmyavenky/postgres:latest
+
+#Push the spring boot app image. 
+sudo docker tag sowmyavenky/spring-jpa:latest venkyacr1001.azurecr.io/sowmyavenky/spring-jpa:latest
+sudo docker push venkyacr1001.azurecr.io/sowmyavenky/spring-jpa:latest
+
+#After this we should have the images as shown below
+venky@quickvm:~$ sudo docker images
+REPOSITORY                                       TAG        IMAGE ID       CREATED        SIZE
+paketobuildpacks/run                             base-cnb   aaa2f1dd3ebf   6 hours ago    88.8MB
+postgres                                         latest     68f5d950dcd3   2 weeks ago    379MB
+sowmyavenky/spring-jpa                           latest     19ad5a91b10c   42 years ago   250MB
+venkyacr1001.azurecr.io/sowmyavenky/spring-jpa   latest     19ad5a91b10c   42 years ago   250MB <-- Note this
+paketobuildpacks/builder                         base       e7466b79959b   42 years ago   1.32GB
+
+# Also we can list the images from the ACR with this command from laptop 
+PS C:\Venky\DP-203\Azure-AZ-204\microsoft-labs\Lab05> az acr repository list --name venkyacr1001
+[
+  "sowmyavenky/spring-jpa"
+]
+
+# We can also see the extra attributes of an image like this
+PS C:\Venky\DP-203\Azure-AZ-204\microsoft-labs\Lab05> az acr repository show  --name venkyacr1001 --image sowmyavenky/spring-jpa
+{
+  "changeableAttributes": {
+    "deleteEnabled": true,
+    "listEnabled": true,
+    "readEnabled": true,
+    "writeEnabled": true
+  },
+  "createdTime": "2022-12-06T02:17:47.0407804Z",
+  "digest": "sha256:b8a89bbb1f5f96c73e5c6d97a715ec36f9c27a13e643f4f943846b3ec35bcf2e",
+  "lastUpdateTime": "2022-12-06T02:17:47.0407804Z",
+  "name": "latest",
+  "quarantineState": "Passed",
+  "signed": false
+}
+
+## We need to next review the ACI (Azure container instance) deployment YAML file. Need to change the region and the token value 
+## as needed from the previous captures. 
+## deploy the container group referencing the YAML from here.
+
+.\1003-deploy-aci.ps1
+
+## Check the IP address of the ACI overview screen
+curl -X POST http://40.78.126.43:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":1,"title":"Spring boot tutorial #1", "description":"This is the 1st in the series", "published": false}'
+curl -X POST http://40.78.126.43:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":2,"title":"Spring boot tutorial #2", "description":"This is the 2nd in the series", "published": false}'
+curl -X POST http://40.78.126.43:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":3,"title":"Spring boot tutorial #3", "description":"This is the 3rd in the series", "published": false}'
+curl -X POST http://40.78.126.43:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":4,"title":"Spring boot tutorial #4", "description":"This is the 4th in the series", "published": false}'
+curl -X GET http://40.78.126.43:8080/api/tutorials; echo ""
+curl -X GET http://40.78.126.43:8080/api/tutorials/1; echo ""
+curl -X GET http://40.78.126.43:8080/api/tutorials/2; echo ""
+curl -X GET http://40.78.126.43:8080/api/tutorials/3; echo ""
+curl -X GET http://40.78.126.43:8080/api/tutorials/4; echo ""
+
+
+######################## MYSQL SECTION ########################################
+#Push mysql custom image. 
+sudo docker tag sowmyavenky/mysql-custom:latest venkyacr1001.azurecr.io/sowmyavenky/mysql-custom:latest
+sudo docker push venkyacr1001.azurecr.io/sowmyavenky/mysql-custom:latest
+
 ## mysql in docker
 ## We need to customize the mysql install with a custom database, and custom user. This will need a new docker file. 
 ## Create a new directory to keep our scripts and dockerfile
@@ -69,122 +205,3 @@ mysql> show databases;
 | sys                |
 | testdb             |
 +--------------------+
-
-## Sample springboot app with mysql 
-sudo apt install -y wget unzip
-wget https://github.com/SowmyaVenky/Azure-AZ-204/raw/main/microsoft-labs/Lab05/spring-mysql-jpa.zip
-unzip spring-mysql-jpa.zip
-rm spring-mysql-jpa.zip
-cd spring-mysql-jpa
-
-sudo apt install -y default-jdk maven
-mvn clean package
-mvn spring-boot:run
-
-## This is how we insert and get data
-
-curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":1,"title":"Spring boot tutorial #1", "description":"This is the 1st in the series", "published": false}'
-curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":2,"title":"Spring boot tutorial #2", "description":"This is the 2nd in the series", "published": false}'
-curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":3,"title":"Spring boot tutorial #3", "description":"This is the 3rd in the series", "published": false}'
-curl -X POST http://localhost:8080/api/tutorials   -H 'Content-Type: application/json' -d '{"id":4,"title":"Spring boot tutorial #4", "description":"This is the 4th in the series", "published": false}'
-curl -X GET http://localhost:8080/api/tutorials
-curl -X GET http://localhost:8080/api/tutorials/1
-curl -X GET http://localhost:8080/api/tutorials/2
-curl -X GET http://localhost:8080/api/tutorials/3
-curl -X GET http://localhost:8080/api/tutorials/4
-
-## Next build docker image for the app layer,
-sudo mvn spring-boot:build-image -Dspring-boot.build-image.imageName=sowmyavenky/spring-mysql-jpa
-
-## Make sure that both the custom images are there
-venky@quickvm:~/mysql-custom/spring-mysql-jpa$ sudo docker images
-REPOSITORY                     TAG        IMAGE ID       CREATED          SIZE
-sowmyavenky/mysql-custom       latest     1635fb73a24a   18 minutes ago   538MB
-paketobuildpacks/run           base-cnb   9d986bd5e914   3 days ago       88.8MB
-mysql                          latest     a3a2968869cf   5 days ago       538MB <--- Custom image
-paketobuildpacks/builder       base       4d66077a2347   42 years ago     1.32GB
-sowmyavenky/spring-mysql-jpa   latest     fdb45e6ae5b6   42 years ago     249MB <--- Custom image
-
-## Next create the ACR 
-.\1002-create-acr.ps1
-
-#### Get the token value from the powershell and set it as env var on vm, and then use that to login to the registry from the virtual machine.
-export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFXRkc6TTIzNzpLMkhBOjMzREs6NVBHVDpDQTNNOkRCTjM6WE9RQjpBNVFCOkk2M1E6QVQzUTpOUUFLIn0.eyJqdGkiOiJlZjZiMDQxMS0zOTU2LTQwZWYtODJiMS0zZjg4YzM5MWJhMjkiLCJzdWIiOiJjbG91ZF91c2VyX3BfZDA5OWNiMWNAYXp1cmVsYWJzLmxpbnV4YWNhZGVteS5jb20iLCJuYmYiOjE2NzAyNzI1NDUsImV4cCI6MTY3MDI4NDI0NSwiaWF0IjoxNjcwMjcyNTQ1LCJpc3MiOiJBenVyZSBDb250YWluZXIgUmVnaXN0cnkiLCJhdWQiOiJ2ZW5reWFjcjEwMDEuYXp1cmVjci5pbyIsInZlcnNpb24iOiIxLjAiLCJyaWQiOiIxNDE5MDEyZTk4YTc0NDQxOGM5MmNhMTljMGM1Nzc4NCIsImdyYW50X3R5cGUiOiJyZWZyZXNoX3Rva2VuIiwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJ0ZW5hbnQiOiIzNjE3ZWY5Yi05OGI0LTQwZDktYmE0My1lMWVkNjcwOWNmMGQiLCJwZXJtaXNzaW9ucyI6eyJBY3Rpb25zIjpbInJlYWQiLCJ3cml0ZSIsImRlbGV0ZSIsImRlbGV0ZWQvcmVhZCIsImRlbGV0ZWQvcmVzdG9yZS9hY3Rpb24iXSwiTm90QWN0aW9ucyI6bnVsbH0sInJvbGVzIjpbXX0.i2KYIiYz26fUzhnMblqCC73mqm7i2Vsju-igD2AHP7MvrQNp7XESNhdhfHTkWlN6OUb5WJwxRFpG3Los2OBq2lBL2VhR_V1fknlYgg4OWJuV93N-leb7Spdt-Nlfv8mGchDveIuBJqRZXDcJTIWN0GrPmkEmxRnAcb5GJW4ZvOo6vEir3MXlmDeY8dZzo6ZlEXnqQCN0bee4T7uhb39_b28OQZCOK6209-hQ2qVi9uca4Urek-xHTx98lqmNO00pKX3rkJzrJnS2-ZR5qd9cjSLCwije5umVnr7CfUl9VjPybzozKvg5fR2lYJcc4_IeEWRIyQOe5HjOT5DBulAk8g
-sudo docker login venkyacr1001.azurecr.io -u 00000000-0000-0000-0000-000000000000 -p $TOKEN
-
-#Push mysql custom image. 
-sudo docker tag sowmyavenky/mysql-custom:latest venkyacr1001.azurecr.io/sowmyavenky/mysql-custom:latest
-sudo docker push venkyacr1001.azurecr.io/sowmyavenky/mysql-custom:latest
-
-#Push the spring boot app image. 
-sudo docker tag sowmyavenky/spring-mysql-jpa:latest venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa:latest
-sudo docker push venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa:latest
-
-#After this we should have the images as shown below
-venky@quickvm:~/mysql-custom/spring-mysql-jpa$ sudo docker images
-REPOSITORY                                             TAG        IMAGE ID       CREATED          SIZE
-sowmyavenky/mysql-custom                               latest     1635fb73a24a   28 minutes ago   538MB
-venkyacr1001.azurecr.io/sowmyavenky/mysql-custom       latest     1635fb73a24a   28 minutes ago   538MB <-- Note this.
-paketobuildpacks/run                                   base-cnb   9d986bd5e914   3 days ago       88.8MB
-mysql                                                  latest     a3a2968869cf   5 days ago       538MB
-paketobuildpacks/builder                               base       4d66077a2347   42 years ago     1.32GB
-sowmyavenky/spring-mysql-jpa                           latest     fdb45e6ae5b6   42 years ago     249MB
-venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa   latest     fdb45e6ae5b6   42 years ago     249MB <-- Note this.
-
-# Also we can list the images from the ACR with this command from laptop 
-PS C:\Venky\DP-203\Azure-AZ-204\microsoft-labs\Lab05> az acr repository list --name venkyacr1001
-[
-  "sowmyavenky/mysql-custom",
-  "sowmyavenky/spring-mysql-jpa"
-]
-
-# We can also see the extra attributes of an image like this
-PS C:\Venky\DP-203\Azure-AZ-204\microsoft-labs\Lab05> az acr repository show  --name venkyacr1001 --image sowmyavenky/mysql-custom
-{
-  "changeableAttributes": {
-    "deleteEnabled": true,
-    "listEnabled": true,
-    "readEnabled": true,
-    "writeEnabled": true
-  },
-  "createdTime": "2022-12-05T15:49:16.7083789Z",
-  "digest": "sha256:b646ef88b6e1fe1a5b96750b341578c81a0247241d087444be0d98b2855640f5",
-  "lastUpdateTime": "2022-12-05T15:49:16.7083789Z",
-  "name": "latest",
-  "quarantineState": "Passed",
-  "signed": false
-}
-
-## Make sure we can run the container from the azure container registry
-## For this we need to create a network and start both containers with the same network ref
-sudo docker network create venky-network
-sudo docker network ls
-
-sudo docker run --network venky-network --name=venkymysql -e MYSQL_ROOT_PASSWORD=Ganesh20022002  -p 3306:3306 -d venkyacr1001.azurecr.io/sowmyavenky/mysql-custom 
-sudo docker run --network venky-network --name venkyfrontend -p 8080:8080 -d venkyacr1001.azurecr.io/sowmyavenky/spring-mysql-jpa:latest
-
-## Make sure that the curl commands work. The main change here is that we are now using venkymysql to connect to the sql server instance 
-## rather than using localhost as beore.
-## Execute curl commands to make sure the entire solution is good. 
-
-## Now we use docker compose to test
-## Copy the docker-compose.yaml to the vm
-sudo apt install -y docker-compose
-
-##There is a problem with docker compose the database does not come up before the app and it keeps failing. So, we start each component 
-sudo docker-compose up venkymysql
-sudo docker-compose up server
-
-#Issue curl commands to make sure it all works!
-
-## We need to next review the ACI (Azure container instance) deployment YAML file. Need to change the region and the token value 
-## as needed from the previous captures. 
-## deploy the container group referencing the YAML from here.
-
-.\1003-deploy-aci.ps1
-
-## For some reason whatever i do mysql container just keeps on restarting. need to debug that.
-## Test mysql container 
-az container create -g 1-147315a1-playground-sandbox --name custommysql --image venkyacr1001.azurecr.io/sowmyavenky/mysql-custom --ip-address public --ports 3306 --command-line "tail -f /dev/null"
-az container logs -g 1-147315a1-playground-sandbox --name custommysql
-az container show -g 1-147315a1-playground-sandbox --name custommysql

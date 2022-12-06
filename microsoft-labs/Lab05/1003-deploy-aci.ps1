@@ -12,4 +12,4 @@ echo "Getting the location of the resource group to create resources"
 $location = az group list --output tsv --query [*].location --subscription $SUBSCRIPTION_ID
 echo $location 
 
-az container create --resource-group $rg --file container-msft-example-test.yaml 
+az container create --resource-group $rg --file container-group.yaml 
