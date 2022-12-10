@@ -1,0 +1,18 @@
+image: docker:latest
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+
+stages:
+  - build
+
+maven-build:
+  image: maven:3-jdk-8
+  stage: build
+  script: "ls -ld /tmp; chmod +t /tmp; mvn clean package; ls -lrt"
+  artifacts:
+    paths:
+      - target/*.jar
