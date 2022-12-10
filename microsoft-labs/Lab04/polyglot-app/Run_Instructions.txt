@@ -13,8 +13,7 @@ Install the emulator for windows by downloading it from microsoft.
 Start the emulator and get the values for the url, key etc. from the windows that shows.
 
 ## Run the ModelsDataLoader program to load all the documents from the models.json file to cosmos.
-mvn exec:java -Dexec.mainClass="com.gssytems.polyglot.ModelsDataLoader" -Dexec.args="C:\\Venky\\DP-203\\Azure-AZ-204\\microsoft-labs\\Lab04\\productimages\\"
-
+mvn exec:java -Dexec.mainClass="com.gssytems.polyglot.ModelsDataLoader" 
 ## The issues these queries to check
 
 SELECT * FROM Model
