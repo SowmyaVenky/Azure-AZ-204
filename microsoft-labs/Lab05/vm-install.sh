@@ -24,5 +24,7 @@ sudo docker exec -it venkymysql bash
 
 ## Sample springboot app with mysql 
 sudo apt install wget
+wget https://github.com/SowmyaVenky/Azure-AZ-204/raw/main/microsoft-labs/Lab05/spring-mysql-jpa.zip
+
 sudo apt install -y default-jdk maven
 mvn clean package

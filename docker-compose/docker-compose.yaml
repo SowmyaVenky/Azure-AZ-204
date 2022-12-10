@@ -1,0 +1,58 @@
+version: "3"
+services:
+  gitlab:
+    image: gitlab/gitlab-ee:latest
+    hostname: gitlab
+    restart: unless-stopped
+    privileged: true
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url = 'http://localhost'
+        gitlab_rails['gitlab_shell_ssh_port'] = 8822
+        gitlab_rails['initial_root_password'] = 'fe+LnAu9F2iA1JWUFn6JcYRetroEjq9WI7xpSrZvtIQ='
+    ports:
+      - "8000:80"
+      - "8822:22"
+    volumes:
+      - C:\Venky\gitlab-experiments\config:/etc/gitlab  
+      - C:\Venky\gitlab-experiments\logs:/var/log/gitlab  
+      - C:\Venky\gitlab-experiments\data:/var/opt/gitlab
+    networks:
+        dev-net:
+          aliases:
+            - my.gitlab
+
+  runner:
+    image: 'gitlab/gitlab-runner:latest'
+    container_name: gitlab-runner
+    restart: always
+    volumes:
+      - C:\Venky\gitlab-experiments\runner-config:/etc/gitlab-runner
+      - C:\Venky\gitlab-experiments\runner-tmp:/tmp
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - dev-net
+
+  register-runner:
+    restart: 'no'
+    image: registry.gitlab.com/gitlab-org/gitlab-runner:alpine
+    environment:
+      - CI_SERVER_URL=${CI_SERVER_URL}
+      - REGISTRATION_TOKEN=${REGISTRATION_TOKEN}
+    command:
+      - register
+      - --non-interactive
+      - --locked=false
+      - --priviledged=true
+      - --name=${RUNNER_NAME}
+      - --executor=docker
+      - --docker-image=docker:stable
+      - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
+      - --network_mode=development
+    volumes:
+      - C:\Venky\gitlab-experiments\runner-config:/etc/gitlab-runner
+      
+networks:
+  dev-net:
+    external:
+      name: development

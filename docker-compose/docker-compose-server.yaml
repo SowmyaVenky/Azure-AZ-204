@@ -1,0 +1,72 @@
+version: '3.5'
+services:
+  dind:
+    image: docker:20-dind
+    restart: always
+    privileged: true
+    ports:
+      - "2375:2375"
+    networks:
+      - gitlab-network
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    command:
+      - --storage-driver=overlay2
+
+  gitlab:
+    image: gitlab/gitlab-ee:latest
+    hostname: gitlab
+    restart: unless-stopped
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url = 'http://localhost'
+        gitlab_rails['gitlab_shell_ssh_port'] = 8822
+        gitlab_rails['initial_root_password'] = 'fe+LnAu9F2iA1JWUFn6JcYRetroEjq9WI7xpSrZvtIQ='
+    ports:
+      - "8000:80"
+      - "8822:22"
+    volumes:
+      - C:\Venky\gitlab-experiments\config:/etc/gitlab  
+      - C:\Venky\gitlab-experiments\logs:/var/log/gitlab  
+      - C:\Venky\gitlab-experiments\data:/var/opt/gitlab
+    networks:
+      - gitlab-network
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    restart: unless-stopped
+    links:
+      - gitlab
+    depends_on:
+      - gitlab
+      - dind
+    environment:
+      - DOCKER_HOST=tcp://dind:2375    
+    volumes:
+      - C:\Venky\gitlab-experiments\runner-config:/etc/gitlab-runner
+    networks:
+      - gitlab-network
+
+  register-runner:
+    restart: 'no'
+    image: registry.gitlab.com/gitlab-org/gitlab-runner:alpine
+    depends_on:
+      - dind
+    environment:
+      - CI_SERVER_URL=${CI_SERVER_URL}
+      - REGISTRATION_TOKEN=${REGISTRATION_TOKEN}
+    command:
+      - register
+      - --non-interactive
+      - --locked=false
+      - --name=${RUNNER_NAME}
+      - --executor=docker
+      - --docker-image=docker:20-dind
+      - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
+    volumes:
+      - C:\Venky\gitlab-experiments\runner-config:/etc/gitlab-runner
+    networks:
+      - gitlab-network
+
+networks:
+  gitlab-network:
