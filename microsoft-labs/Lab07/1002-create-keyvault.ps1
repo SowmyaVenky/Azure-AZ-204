@@ -19,5 +19,4 @@ echo "This gets the value from the previous storage account create process..."
 echo "Creating key in vault to set the key to storage account."
 az keyvault key create --vault-name "venkykeyvault1001" --name "storageacctkey" --protection software
 az keyvault secret set --vault-name "venkykeyvault1001" --name "storageacctkey" --value $storageaccountkey
-
 az keyvault secret set --vault-name "venkykeyvault1001" --name "storageacctconnstring" --value $storageconnstring
