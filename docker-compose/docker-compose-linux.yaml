@@ -13,8 +13,8 @@ services:
       - "8000:80"
       - "8822:22"
     volumes:
-      - /home/sowmyavenky/gitlabexperiments/config:/etc/gitlab  
-      - /home/sowmyavenky/gitlabexperiments/logs:/var/log/gitlab  
+      - /home/sowmyavenky/gitlabexperiments/config:/etc/gitlab
+      - /home/sowmyavenky/gitlabexperiments/logs:/var/log/gitlab
       - /home/sowmyavenky/gitlabexperiments/data:/var/opt/gitlab
     networks:
         dev-net:
@@ -32,7 +32,7 @@ services:
     networks:
       - dev-net
 
-  register-runner:
+ register-runner:
     restart: 'no'
     image: registry.gitlab.com/gitlab-org/gitlab-runner:alpine
     environment:
@@ -42,15 +42,15 @@ services:
       - register
       - --non-interactive
       - --locked=false
-      - --priviledged=true
       - --name=${RUNNER_NAME}
       - --executor=docker
-      - --docker-image=docker:stable
+      - --docker-image=docker:20-dind
       - --docker-volumes=/var/run/docker.sock:/var/run/docker.sock
-      - --network_mode=development
     volumes:
       - /home/sowmyavenky/gitlabexperiments/runner-config:/etc/gitlab-runner
-      
+    networks:
+      - dev-net
+
 networks:
   dev-net:
     external:
